@@ -10,6 +10,7 @@ store_entry/
 .buildlog/
 .history
 .svn/
+migrate_working_dir/
 
 # IntelliJ related
 *.iml
@@ -32,9 +33,7 @@ store_entry/
 .pub-cache/
 .pub/
 /build/
-
-# Web related
-lib/generated_plugin_registrant.dart
+pubspec.lock
 
 # Symbolication related
 app.*.symbols

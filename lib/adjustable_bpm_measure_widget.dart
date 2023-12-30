@@ -20,9 +20,9 @@ class BpmSettingsData extends ChangeNotifier {
     notifyListeners();
   }
 
-  double _baseForWeightExponential = 0.5;
-  double get baseForWeightExponential => _baseForWeightExponential;
-  set baseForWeightExponential(double baseForWeightExponential) {
+  num _baseForWeightExponential = 0.5;
+  num get baseForWeightExponential => _baseForWeightExponential;
+  set baseForWeightExponential(num baseForWeightExponential) {
     _baseForWeightExponential = baseForWeightExponential;
     notifyListeners();
   }
@@ -45,7 +45,7 @@ class BpmSettingsData extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     prefs.setInt('_numClicksKept', _numClicksKept);
     prefs.setInt('_numFullyWeightedClicks', _numFullyWeightedClicks);
-    prefs.setDouble('_baseForWeightExponential', _baseForWeightExponential);
+    prefs.setDouble('_baseForWeightExponential', _baseForWeightExponential.toDouble());
     prefs.setInt('_fgColor', _fgColor.value);
     prefs.setInt('_bgColor', _bgColor.value);
 
@@ -81,6 +81,8 @@ class _PageViewDemoState extends State<PageViewDemo> with WidgetsBindingObserver
 
   @override void didChangeAppLifecycleState(AppLifecycleState state) {
     switch(state) {
+      case AppLifecycleState.hidden:
+        break;
       case AppLifecycleState.resumed:
         break;
       case AppLifecycleState.inactive: case AppLifecycleState.paused: case AppLifecycleState.detached:
@@ -115,16 +117,16 @@ class _PageViewDemoState extends State<PageViewDemo> with WidgetsBindingObserver
       ],
       child: WillPopScope(
         onWillPop: () {
-          if (_controller.page < 0.5)
+          if (_controller.page! < 0.5)
             return _controller.nextPage(
               duration: Duration(milliseconds: 400),
               curve: Curves.easeOut,
-            );
+            ).then((value) => true);
           else
             return _controller.previousPage(
               duration: Duration(milliseconds: 400),
               curve: Curves.easeOut,
-            );
+            ).then((value) => true);
         },
         child: pageView,
       ),
@@ -134,7 +136,7 @@ class _PageViewDemoState extends State<PageViewDemo> with WidgetsBindingObserver
 
 
 class BpmSettingsWidget extends StatefulWidget {
-  BpmSettingsWidget({Key key}) : super(key: key);
+  BpmSettingsWidget({Key? key}) : super(key: key);
   @override _BpmSettingsWidgetState createState() => _BpmSettingsWidgetState();
 }
 
@@ -212,11 +214,13 @@ class _BpmSettingsWidgetState extends State<BpmSettingsWidget> {
             ),
             SizedBox(
               width: double.infinity,
-              child: RaisedButton(
-                color: fgColor,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18.0),
-                    side: BorderSide(color: bgColor)
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: fgColor,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18.0),
+                      side: BorderSide(color: bgColor)
+                  )
                 ),
                 child: Text(
                   "Click to choose foreground color",
@@ -227,7 +231,7 @@ class _BpmSettingsWidgetState extends State<BpmSettingsWidget> {
                 onPressed: () {
                   showDialog(
                     context: context,
-                    child: AlertDialog(
+                    builder: (context) => AlertDialog(
                       title: const Text('Pick a color!'),
                       content: SingleChildScrollView(
                         child: ColorPicker(
@@ -240,7 +244,7 @@ class _BpmSettingsWidgetState extends State<BpmSettingsWidget> {
                         ),
                       ),
                       actions: <Widget>[
-                        FlatButton(
+                        TextButton(
                           child: const Text('Got it'),
                           onPressed: () {
                             Navigator.of(context).pop();
@@ -255,11 +259,13 @@ class _BpmSettingsWidgetState extends State<BpmSettingsWidget> {
             ),
             SizedBox(
               width: double.infinity,
-              child: RaisedButton(
-                color: bgColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18.0),
-                  side: BorderSide(color: fgColor)
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: bgColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                    side: BorderSide(color: fgColor)
+                  ),
                 ),
                 child: Text(
                   "Click to choose background color",
@@ -270,7 +276,7 @@ class _BpmSettingsWidgetState extends State<BpmSettingsWidget> {
                 onPressed: () {
                   showDialog(
                     context: context,
-                    child: AlertDialog(
+                    builder: (context) => AlertDialog(
                       title: const Text('Pick a color!'),
                       content: SingleChildScrollView(
                         child: ColorPicker(
@@ -283,7 +289,7 @@ class _BpmSettingsWidgetState extends State<BpmSettingsWidget> {
                         ),
                       ),
                       actions: <Widget>[
-                        FlatButton(
+                        TextButton(
                           child: const Text('Got it'),
                           onPressed: () {
                             Navigator.of(context).pop();

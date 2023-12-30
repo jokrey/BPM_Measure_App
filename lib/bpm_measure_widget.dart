@@ -1,12 +1,11 @@
 import 'dart:collection';
 import 'dart:math' as math;
 import 'package:bpm_measure_app/adjustable_bpm_measure_widget.dart';
-import 'package:bpm_measure_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class BpmMeasureWidget extends StatefulWidget {
-  BpmMeasureWidget({Key key}) : super(key: key);
+  BpmMeasureWidget({Key? key}) : super(key: key);
   @override _BpmMeasureWidgetState createState() => _BpmMeasureWidgetState();
 }
 
@@ -19,8 +18,8 @@ class _BpmMeasureWidgetState extends State<BpmMeasureWidget> with TickerProvider
       recalculateCurrentBPM();
     };
   }
-  AnimationController _animationController;
-  Animation _animation;
+  late AnimationController _animationController;
+  late Animation _animation;
   @override void initState() {
     // clicks.addFirst(DateTime.now().millisecondsSinceEpoch);
 
@@ -86,7 +85,7 @@ class _BpmMeasureWidgetState extends State<BpmMeasureWidget> with TickerProvider
   void recalculateCurrentBPM() {
     _animationController.forward().then((value) => _animationController.reverse());
     int numFullyWeightedClicks = Provider.of<BpmSettingsData>(context, listen: false).numFullyWeightedClicks;
-    double baseForWeightExponential = Provider.of<BpmSettingsData>(context, listen: false).baseForWeightExponential;
+    num baseForWeightExponential = Provider.of<BpmSettingsData>(context, listen: false).baseForWeightExponential;
 
     setState(() {
       if(clicks.length < 2) {
@@ -102,7 +101,7 @@ class _BpmMeasureWidgetState extends State<BpmMeasureWidget> with TickerProvider
           lastClick = click;
 
           int expI = i - numFullyWeightedClicks;
-          double weight = expI < 0 ? 1 : math.pow(baseForWeightExponential, expI);
+          num weight = expI < 0 ? 1 : math.pow(baseForWeightExponential, expI);
           weightedSum += clickDelay * weight;
           weightSum += weight;
           i++;
